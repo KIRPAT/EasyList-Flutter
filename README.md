@@ -1,4 +1,4 @@
-# MyFirstFlutterApp
+# MyFirstFlutterApp (%17)
 
 I have followed Maximilian Schwarzmüller's [Flutter Course](https://www.udemy.com/learn-flutter-dart-to-build-ios-android-apps/) on Udemy.
 
