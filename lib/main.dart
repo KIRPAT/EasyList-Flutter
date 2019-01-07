@@ -106,7 +106,7 @@ class _MyAppState extends State<MyApp>{
 
   //WIDGETS
   Widget app (){
-    return MaterialApp( // Wraps the whole widget and give capabilities of material design, like theming.
+    return MaterialApp( // Wraps the whole widget and give capabilities of material design app, like theme, navigation.
       theme:ThemeData(
         brightness: Brightness.light,
         canvasColor: Colors.white,
@@ -175,6 +175,11 @@ class _MyAppState extends State<MyApp>{
           );
         }
         return null;
+      },
+      onUnknownRoute: (RouteSettings settings){
+        return MaterialPageRoute(
+          builder: (BuildContext context) => ProductsPage(_products, _addProduct, _deleteProduct)
+        );
       },
     );
   }

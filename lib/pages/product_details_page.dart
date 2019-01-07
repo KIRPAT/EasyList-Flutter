@@ -10,12 +10,42 @@ class ProductDetailsPage extends StatelessWidget{
   ProductDetailsPage(this.title, this.imageURL);
 
   //METHODS
+  /*
+  shoDialog() is dismissed through Navigation.pop() too
+   */
   void _popPage(context){
     Navigator.pop(context, true);
   }
 
   void _onWillPop(context){
     Navigator.pop(context, false);
+  }
+
+  void _showDeleteDialog(context){
+    showDialog(
+      context: context,
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: Text('Are you sure?'),
+          content: Text('You can not undelete it once it is gone.'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: (){
+                Navigator.pop(context);
+              },
+              child: Text('DISCARD')
+            ),
+            FlatButton(
+              onPressed: (){
+                Navigator.pop(context);
+                _popPage(context); //pop with "true" as a second argument,
+              },
+              child: Text('CONTINUE')
+            ),
+          ],
+        );
+      }
+    );
   }
 
   //WIDGETS (from component level widget, to the final composed widget that we need to render)
@@ -35,7 +65,11 @@ class ProductDetailsPage extends StatelessWidget{
             padding: const EdgeInsets.all(8.0),
             child: Text(title),
           ),
-          AccentButton(buttonName: 'DELETE',buttonPress: _popPage, data: context),
+          AccentButton(
+              buttonName: 'DELETE',
+              buttonPress: _showDeleteDialog,
+              data: context
+          ),
         ],
       ),
     );
