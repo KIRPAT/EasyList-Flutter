@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import './pages/auth_page.dart';
 import './pages/product_admin_page.dart';
 import './pages/products_page.dart';
 import './pages/product_details_page.dart';
@@ -79,7 +80,7 @@ class _MyAppState extends State<MyApp>{
   Wanna access any of them? _products[0]['title'];
   Returns the value, not the 'title'. For example, it can return "Chocolate".
    */
-  List<Map<String,String>> _products =[];
+  List<Map<String, dynamic>> _products =[];
 
   //METHODS
   /*
@@ -93,7 +94,7 @@ class _MyAppState extends State<MyApp>{
 
   Best functions have the least amount of parameters. :3
   */
-  void _addProduct(Map<String, String> product){
+  void _addProduct(Map<String, dynamic> product){
     setState((){ // Since the state got changed through setState() function, this Widget will be rendered again.
       _products.add(product);
     });
@@ -112,12 +113,13 @@ class _MyAppState extends State<MyApp>{
         canvasColor: Colors.white,
         primarySwatch: Colors.orange,
         accentColor: Colors.orangeAccent,
+        primaryIconTheme: IconThemeData(color: Colors.white),
       ),
-      //home: AuthPage(),
       title: 'EasyList',
+      home: AuthPage(),
       routes:{
-        '/': (BuildContext context) => ProductsPage(_products, _addProduct, _deleteProduct),
-        '/adminPage' : (BuildContext context) => ProductAdminPage(),
+        '/home': (BuildContext context) => ProductsPage(_products),
+        '/adminPage' : (BuildContext context) => ProductAdminPage(_addProduct, _deleteProduct),
       },
       /*
       --Note_1: What if we need to pass some data to a named route?
@@ -178,7 +180,7 @@ class _MyAppState extends State<MyApp>{
       },
       onUnknownRoute: (RouteSettings settings){
         return MaterialPageRoute(
-          builder: (BuildContext context) => ProductsPage(_products, _addProduct, _deleteProduct)
+          builder: (BuildContext context) => ProductsPage(_products)
         );
       },
     );

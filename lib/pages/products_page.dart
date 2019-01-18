@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 
 import '../product_manager.dart';
+import '../components/ui/side_drawer.dart';
 
 class ProductsPage extends StatelessWidget {
-  final List<Map<String, String>> products;
-  final Function addProduct;
-  final Function deleteProduct;
-  ProductsPage(this.products, this.addProduct, this.deleteProduct);
+  final List<Map<String, dynamic>> products;
+
+  ProductsPage(this.products);
 
   Widget scaffold(context){
     return Scaffold( // Home is the first widget that get's loaded, Scaffhold is AppBar, the white background etc. So? This Scaffhold is the home page.
-      drawer: Drawer(child: Column(children: <Widget>[
-        AppBar(title: Text('Choose!'), automaticallyImplyLeading: false,),
-        ListTile(title: Text('Manage Products'), subtitle: Text('yolo'),
-          onTap: (){
-            Navigator.pushReplacementNamed(context, '/adminPage');
-          },
-        )
-      ],),),
+      drawer: sideDrawer(context),
       appBar: AppBar(
-        title: Text("EasyList"), // AppBar Title
+        //leading: IconButton(icon: Icon(Icons.dehaze, color: Colors.white)),
+        title: Text("EasyList", style: TextStyle(color: Colors.white),),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.favorite, color: Colors.white,),
+            onPressed: (){},
+          ),
+        ],// AppBar Title
       ),
-      body: ProductManager(products, addProduct, deleteProduct),
+      body: ProductManager(products),
     );
   }
 

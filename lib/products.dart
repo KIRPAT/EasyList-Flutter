@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 class Products extends StatelessWidget {
   //CONSTRUCTOR
-  final List<Map<String, String>> products; // First we create the place that holds the product info, the products list. This is *the property* I mentioned.
-  final Function deleteProduct;
-  Products(this.products,{this.deleteProduct}); // And this is the constructor that takes info from the parent and passes it into the products list.
+  final List<Map<String, dynamic>> products; // First we create the place that holds the product info, the products list. This is *the property* I mentioned.
+  Products(this.products); // And this is the constructor that takes info from the parent and passes it into the products list.
 
   //WIDGETS
   /*
@@ -18,25 +17,66 @@ class Products extends StatelessWidget {
   Navigator.pushNamed<> has a future that returns a generic type that we should specify.
 
    */
+
   Widget _buildProductItem(BuildContext context, int index){
     return Card(
       child: Column( // Takes more than one child, it takes children! #CaptainObvious
         children: <Widget>[ // This array will only hold Widgets.
           Image.asset(products[index]['image']),
-          Text(products[index]['title']),
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  products[index]['title'],
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      fontFamily: 'Oswald'
+                  ),
+                ),
+                SizedBox(width: 8.0),
+                Container(
+                  margin: EdgeInsets.only(top: 2.0),
+                  padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: Theme.of(context).accentColor,
+                  ),
+                  child: Text(
+                    products[index]['price'].toString() + ' TL',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+            ],),
+          ),
+          DecoratedBox(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 6.0,vertical: 2.5),
+              child: Text('Taksim, İstanbul')
+            ),
+            decoration: BoxDecoration(
+              border:Border.all(),
+              borderRadius: BorderRadius.circular(5.0)
+            ),
+          ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
-              FlatButton(
-                onPressed: () => Navigator
-                  .pushNamed<bool>( //Push is a generic type, that will eventually return a boolean.
-                    context,
-                    '/productDetailsPage/' + index.toString()
-                   )
-                  .then((bool value){ //that boolean
-                     if (value){deleteProduct(index);} //if true, delete away the product
-                  }),
-                child: Text("Details"),
+              /*
+              Push is a generic type,
+              that will eventually return a boolean as a future.
+              (When the pushed page is popped.)
+              You can chain a .then(...) for that boolean, if you want.
+              */
+              IconButton(
+                onPressed: () => Navigator.pushNamed<bool>(context,'/productDetailsPage/' + index.toString()),
+                icon: Icon(Icons.info, color: Colors.blue,),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.favorite_border, color: Colors.pinkAccent,),
               )
             ],
           ),
