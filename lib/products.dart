@@ -22,19 +22,24 @@ class Products extends StatelessWidget {
     return Card(
       child: Column( // Takes more than one child, it takes children! #CaptainObvious
         children: <Widget>[ // This array will only hold Widgets.
+          //IMAGE
           Image.asset(products[index]['image']),
+          //TITLE, PRICE
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  products[index]['title'],
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                      fontFamily: 'Oswald'
+                Container(
+                  child: Text(
+                    products[index]['title'],
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                        fontFamily: 'Oswald'
+                    ),
                   ),
+                  constraints:BoxConstraints(maxWidth: 200.0),
                 ),
                 SizedBox(width: 8.0),
                 Container(
@@ -51,16 +56,18 @@ class Products extends StatelessWidget {
                 ),
             ],),
           ),
+          //LOCATION
           DecoratedBox(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 6.0,vertical: 2.5),
-              child: Text('Taksim, İstanbul')
+              padding: EdgeInsets.symmetric(horizontal: 6.0,vertical: 4),
+              child: Text(products[index]['location']),
             ),
             decoration: BoxDecoration(
               border:Border.all(),
               borderRadius: BorderRadius.circular(5.0)
             ),
           ),
+          //BUTTON
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[

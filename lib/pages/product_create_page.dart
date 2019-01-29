@@ -47,7 +47,8 @@ class _ProductCreatePageState extends State<ProductCreatePage>{
       'title': _titleValue,
       'description': _descriptionValue,
       'price': _priceValue,
-      'image': 'assets/lmr.png'
+      'image': 'assets/lmr.png',
+      'location': 'İstanbul, Taksim',
     };
     widget.addProduct(product);
     Navigator.pushReplacementNamed(context, '/home ');

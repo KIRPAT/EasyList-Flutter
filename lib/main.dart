@@ -172,7 +172,10 @@ class _MyAppState extends State<MyApp>{
           return MaterialPageRoute<bool>(builder: (BuildContext context) =>
             ProductDetailsPage(
                 _products[index]['title'],
-                _products[index]['image']
+                _products[index]['image'],
+                _products[index]['description'],
+                _products[index]['price'],
+                _products[index]['location'],
             )
           );
         }

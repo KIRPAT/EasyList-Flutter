@@ -7,7 +7,10 @@ class ProductDetailsPage extends StatelessWidget{
   //CONSTRUCTOR
   final String title;
   final String imageURL;
-  ProductDetailsPage(this.title, this.imageURL);
+  final String description;
+  final double price;
+  final String location;
+  ProductDetailsPage(this.title, this.imageURL, this.description, this.price, this.location);
 
   //METHODS
   /*
@@ -52,25 +55,108 @@ class ProductDetailsPage extends StatelessWidget{
   Widget _scaffold(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text('Product Details', style: TextStyle(color: Colors.white)),
       ),
-      body:Column(
-        //mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(imageURL),
+      body:SingleChildScrollView( //Scrollable details page
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+
+          //The main Column
+          child: Column(
+            children: <Widget>[
+
+              //Image
+              /*
+              What if the product has more than one image? Food for a thought.
+               */
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Image.asset(imageURL),
+                ),
+              ),
+
+              //Title and Price
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                            fontFamily: 'Oswald'
+                        ),
+                      ),
+                    ),
+                    //constraints:BoxConstraints(maxWidth: 200.0),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 2.0),
+                        padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          color: Theme.of(context).accentColor,
+                        ),
+                        child: Text(
+                          price.toString() + ' TL',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              //Location
+              DecoratedBox(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6.0,vertical: 4),
+                  child: Text(location),
+                ),
+                decoration: BoxDecoration(
+                    border:Border.all(),
+                    borderRadius: BorderRadius.circular(5.0)
+                ),
+              ),
+
+              //Divider
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(child: SizedBox(), flex:1),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        height: 1.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Expanded(child: SizedBox(), flex:1),
+                  ],
+                ),
+              ),
+
+              //Details
+              Container(
+                child: Column(children: <Widget>[
+                  Text('Details:', style: TextStyle(fontStyle: FontStyle.italic, fontFamily: 'Oswald', fontSize: 15.0),),
+                  SizedBox(height: 6.0,),
+                  Text(description),
+                ],)
+              ),
+
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(title),
-          ),
-          AccentButton(
-              buttonName: 'DELETE',
-              buttonPress: _showDeleteDialog,
-              data: context
-          ),
-        ],
+        ),
       ),
     );
   }
