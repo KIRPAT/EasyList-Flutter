@@ -1,5 +1,5 @@
-## My First Flutter App (EasyList)
-##### Completion: %25
+## EasyList (My First Flutter App)
+##### Completion: %37
 
 EasyList is a product listing app that users can list any kind of product and give it a price. There is (currently) no back-end, and it is primarily focused on understanding the workflow of the Flutter framework. 
 
