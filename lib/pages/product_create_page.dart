@@ -59,14 +59,18 @@ class _ProductCreatePageState extends State<ProductCreatePage>{
   I need to create a text input widget and call it here.
    */
   Widget _render(context){
+    final _width = MediaQuery.of(context).size.width;
+    final _targetWidth = _width > 550 ? 500.0 : _width * 0.9;
+    final _targetPadding = _width - _targetWidth;
     return Container(
-      margin: EdgeInsets.all(10.0),
+      width: 300,
+      //margin: EdgeInsets.all(10.0),
       child: ListView(
+        padding: EdgeInsets.symmetric(horizontal: _targetPadding / 1.5),
         children: <Widget>[
-
           //PRODUCT NAME
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: TextField(
               decoration: InputDecoration(
                   labelText: 'ProductName' ,
@@ -84,7 +88,7 @@ class _ProductCreatePageState extends State<ProductCreatePage>{
 
           //DESCRIPTION
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: TextField(
               decoration: InputDecoration(
                   labelText: 'Description' ,
@@ -103,7 +107,7 @@ class _ProductCreatePageState extends State<ProductCreatePage>{
 
           //PRICE
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: TextField(
               decoration: InputDecoration(
                 labelText: 'Price' ,
@@ -125,10 +129,13 @@ class _ProductCreatePageState extends State<ProductCreatePage>{
             ),
           ),
 
-          RaisedButton(
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 80),
+            child: RaisedButton(
               color: Theme.of(context).accentColor,
               onPressed: _addProduct,
-              child: Text('Add Product!'),
+              child: Text('Add Product!', style: TextStyle(color: Colors.white)),
+            ),
           ),
         ],
       ),

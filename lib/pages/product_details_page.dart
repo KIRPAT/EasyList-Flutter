@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import '../components/styled_text/price_tag.dart';
+import '../components/styled_text/default_product_title.dart';
+import '../components/styled_text/location_tag.dart';
 
-import '../components/buttons/accent_button.dart';
+import 'dart:async';
 
 class ProductDetailsPage extends StatelessWidget{
   //CONSTRUCTOR
@@ -83,58 +85,31 @@ class ProductDetailsPage extends StatelessWidget{
                   Expanded(
                     flex: 2,
                     child: Center(
-                      child: Text(
-                        title,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
-                            fontFamily: 'Oswald'
-                        ),
-                      ),
+                      child: DefaultProductTitle(title), //Custom Widget
                     ),
                     //constraints:BoxConstraints(maxWidth: 200.0),
                   ),
                   Expanded(
                     flex: 1,
                     child: Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 2.0),
-                        padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color: Theme.of(context).accentColor,
-                        ),
-                        child: Text(
-                          price.toString() + ' TL',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
+                      child: PriceTag(price),
                     ),
                   ),
                 ],
               ),
 
               //Location
-              DecoratedBox(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 6.0,vertical: 4),
-                  child: Text(location),
-                ),
-                decoration: BoxDecoration(
-                    border:Border.all(),
-                    borderRadius: BorderRadius.circular(5.0)
-                ),
-              ),
+              LocationTag(location),
 
               //Divider
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
+                padding: EdgeInsets.only(top: 13.0, bottom: 5.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Expanded(child: SizedBox(), flex:1),
                     Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: Container(
                         height: 1.0,
                         color: Colors.grey,

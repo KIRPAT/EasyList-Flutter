@@ -13,22 +13,29 @@ class ProductAdminPage extends StatelessWidget {
 
   //WIDGETS
   Widget _productAdminPageRender(BuildContext context){
-    return DefaultTabController(
-      length: 2,
-      child:  Scaffold(
-        drawer: sideDrawer(context),
-        appBar: AppBar(
-          title: Text('Product Management'),
-          bottom: TabBar(tabs: <Widget> [
-            Tab(text: 'Create Products', icon: Icon(Icons.create),),
-            Tab(text: 'MyProducts', icon: Icon(Icons.view_list),),
-          ]),
-        ),
-        body: TabBarView(children: <Widget>[
-          ProductCreatePage(addProduct),
-          ProductListPage(),
-        ]),
-      )
+    return Container(
+      child: DefaultTabController(
+        length: 2,
+        child:  Scaffold(
+          drawer: sideDrawer(context),
+          appBar: AppBar(
+            title: Text('Product Management', style: TextStyle(color: Colors.white),),
+            bottom: TabBar(
+              indicatorColor: Colors.white,
+              tabs: <Widget> [
+                Tab(icon: Icon(Icons.create, color: Colors.white,),),
+                Tab(icon: Icon(Icons.view_list, color: Colors.white,),),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: <Widget>[
+              ProductCreatePage(addProduct),
+              ProductListPage(),
+            ]
+          ),
+        )
+      ),
     );
   }
 

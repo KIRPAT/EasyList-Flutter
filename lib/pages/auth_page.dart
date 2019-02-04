@@ -13,6 +13,7 @@ class _AuthPageState extends State<AuthPage>{
   //STATES
   String _email = '';
   String _password = '';
+
   //METHODS
   void _login(context){
     print(_email+' '+_password);
@@ -36,6 +37,9 @@ class _AuthPageState extends State<AuthPage>{
   Then wrap that with Center widget. Problem is focus.
   */
   Widget authPageRender(BuildContext context){
+    final _width = MediaQuery.of(context).size.width;
+    final _targetWidth = _width > 500.0 ? _width * 0.6 : _width * 0.9;
+
     return Scaffold(
       body: Container(
         //ContainerStyle
@@ -51,55 +55,59 @@ class _AuthPageState extends State<AuthPage>{
         ),
         padding: const EdgeInsets.all(8.0),
         //ContainerContent
-        child: Center(
+        child: Container(
+          alignment: Alignment.center,
           child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                //E-MAIL
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    onChanged: (String value){
-                      setState(() {
-                        _email = value;
-                      });
-                    },
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                      labelText: 'E-mail',
-                      hintText: 'user@email.com',
-                      icon: Icon(Icons.mail),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
+            child: Container(
+              width: _targetWidth, //Always %80 of the available width.
+              child: Column(
+                children: <Widget>[
+                  //E-MAIL
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      onChanged: (String value){
+                        setState(() {
+                          _email = value;
+                        });
+                      },
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                        labelText: 'E-mail',
+                        hintText: 'user@email.com',
+                        icon: Icon(Icons.mail),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.8),
+                      ),
                     ),
                   ),
-                ),
-                //PASSWORD
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    onChanged: (String value){
-                      setState(() {
-                        _password = value;
-                      });
-                    },
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                      labelText: 'Password',
-                      icon: Icon(Icons.vpn_key),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
+                  //PASSWORD
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      onChanged: (String value){
+                        setState(() {
+                          _password = value;
+                        });
+                      },
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+                        labelText: 'Password',
+                        icon: Icon(Icons.vpn_key),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.8),
+                      ),
                     ),
                   ),
-                ),
-                //Login Button
-                Padding(
-                  padding: EdgeInsets.only(left: 100.0, right: 100.0),
-                  child: AccentButton(buttonName: 'Login', buttonPress: _login, data: context),
-                ),
-              ],
+                  //Login Button
+                  Padding(
+                    padding: EdgeInsets.only(left: 100.0, right: 100.0),
+                    child: AccentButton(buttonName: 'Login', buttonPress: _login, data: context),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
