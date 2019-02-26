@@ -11,13 +11,43 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage>{
   //STATES
-  String _email = '';
-  String _password = '';
+  final Map<String, dynamic> _loginFormData = {
+    'email': null,
+    'password': null,
+    'acceptTerms': false
+  };
+  final GlobalKey<FormState> _loginFormKey = new GlobalKey<FormState>();
 
   //METHODS
   void _login(context){
-    print(_email+' '+_password);
+    if (!_loginFormKey.currentState.validate() || !_loginFormData['acceptTerms']){return;}
+    _loginFormKey.currentState.save();
+    print(_loginFormData); //Dummy Code
     Navigator.pushReplacementNamed(context, '/home');
+  }
+
+  //STYLE COMPONENTS
+  InputDecoration _loginFormInputDecoration(String labelText, String hintText, IconData fieldIcon) {
+    return InputDecoration(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
+      labelText: labelText,
+      hintText: hintText,
+      icon: Icon(fieldIcon),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.8),
+    );
+  }
+  BoxDecoration _loginPageBoxDecoration (String assetDirectory){
+    return BoxDecoration(
+      image: DecorationImage(
+        image: AssetImage(assetDirectory),
+        fit: BoxFit.cover,
+        colorFilter: ColorFilter.mode(
+          Colors.black.withOpacity(0.2),
+          BlendMode.dstATop,
+        ),
+      ),
+    );
   }
   //WIDGETS
   /*
@@ -37,76 +67,86 @@ class _AuthPageState extends State<AuthPage>{
   Then wrap that with Center widget. Problem is focus.
   */
   Widget authPageRender(BuildContext context){
+    final String _emailRegExp = r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+    final String _passwordRegExp = r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$';
     final _width = MediaQuery.of(context).size.width;
     final _targetWidth = _width > 500.0 ? _width * 0.6 : _width * 0.9;
 
     return Scaffold(
-      body: Container(
-        //ContainerStyle
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/delo.jpg'),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.2),
-              BlendMode.dstATop,
-            ),
-          ),
-        ),
-        padding: const EdgeInsets.all(8.0),
-        //ContainerContent
+      body: GestureDetector(
+        onTap: (){FocusScope.of(context).requestFocus(FocusNode());}, //close keyboard on empty space tap
         child: Container(
-          alignment: Alignment.center,
-          child: SingleChildScrollView(
-            child: Container(
-              width: _targetWidth, //Always %80 of the available width.
-              child: Column(
-                children: <Widget>[
-                  //E-MAIL
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      onChanged: (String value){
-                        setState(() {
-                          _email = value;
-                        });
-                      },
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                        labelText: 'E-mail',
-                        hintText: 'user@email.com',
-                        icon: Icon(Icons.mail),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.8),
+          //ContainerStyle
+          decoration: _loginPageBoxDecoration('assets/delo.jpg'),
+          padding: const EdgeInsets.all(8.0),
+          //ContainerContent
+          child: Container(
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              child: Container(
+                width: _targetWidth, //Always %80 of the available width.
+                child: Form(
+                  key: _loginFormKey,
+                  child: Column(
+                    children: <Widget>[
+                      //E-MAIL
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          validator: (String value){
+                            if (value.isEmpty || !RegExp(_emailRegExp).hasMatch(value)) {
+                              return 'Please enter a valid E-mail.';
+                              //Note: Database query for user login is required.
+                            }
+                          },
+                          decoration: _loginFormInputDecoration('E-mail', 'user@email', Icons.mail),
+                          onSaved: (String value){_loginFormData['email']= value;},
+                          keyboardType: TextInputType.emailAddress,
+                        ),
                       ),
-                    ),
-                  ),
-                  //PASSWORD
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      onChanged: (String value){
-                        setState(() {
-                          _password = value;
-                        });
-                      },
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
-                        labelText: 'Password',
-                        icon: Icon(Icons.vpn_key),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.8),
+                      //PASSWORD
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          validator: (String value){
+                            if (value.isEmpty || value.length < 6) {
+                              return 'Please enter a valid password.';
+                              //Note: Database query for user login is required.
+                            }
+                          },
+                          decoration: _loginFormInputDecoration('password', 'A-z, 0-9, -_,', Icons.vpn_key),
+                          onSaved: (String value){_loginFormData['password'] = value;},
+                          obscureText: true,
+                        ),
                       ),
-                    ),
+                      //Login Button
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox()
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: SwitchListTile(
+                              title: Text('Terms of Service'),
+                              value: _loginFormData['acceptTerms'],
+                              onChanged: (bool value){
+                                setState(() {
+                                  _loginFormData['acceptTerms'] = value;
+                                });
+                              }
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 100.0, right: 100.0),
+                        child: AccentButton(buttonName: 'Login', buttonPress: _login, data: context),
+                      ),
+                    ],
                   ),
-                  //Login Button
-                  Padding(
-                    padding: EdgeInsets.only(left: 100.0, right: 100.0),
-                    child: AccentButton(buttonName: 'Login', buttonPress: _login, data: context),
-                  ),
-                ],
+                ),
               ),
             ),
           ),

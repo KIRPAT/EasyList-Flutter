@@ -14,9 +14,15 @@ class ProductCreatePage extends StatefulWidget {
 
 class _ProductCreatePageState extends State<ProductCreatePage>{
   //STATES
-  String _titleValue = 'Yolo'; // You can not render null text. We need an empty one.
-  String _descriptionValue;
-  double _priceValue = 0.0;
+  final Map<String, dynamic> _formData={
+    'title': null,
+    'description': null,
+    'price': null,
+    'image': 'assets/lmr.png',
+    'location': 'İstanbul, Taksim',
+  };
+
+  final GlobalKey<FormState> _productFormKey = new GlobalKey<FormState>();
   //METHODS
   /* Note_1 - Modal Example
   void _modal(context){ //modals return future too, if needed.
@@ -42,16 +48,21 @@ class _ProductCreatePageState extends State<ProductCreatePage>{
 
   then BUILD METHOD
   */
-  void _addProduct(){
-    final Map<String, dynamic> product={
-      'title': _titleValue,
-      'description': _descriptionValue,
-      'price': _priceValue,
-      'image': 'assets/lmr.png',
-      'location': 'İstanbul, Taksim',
-    };
-    widget.addProduct(product);
+  void _submitForm(){
+    //if the validation returns false do not save
+    if (!_productFormKey.currentState.validate()){return;}
+    _productFormKey.currentState.save();
+    widget.addProduct(_formData);
     Navigator.pushReplacementNamed(context, '/home ');
+  }
+  //STYLE
+  InputDecoration _formInputDecoration(String labelText) {
+    return  InputDecoration(
+      labelText: labelText ,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      )
+    );
   }
   //WIDGETS
   /*
@@ -59,86 +70,83 @@ class _ProductCreatePageState extends State<ProductCreatePage>{
   I need to create a text input widget and call it here.
    */
   Widget _render(context){
+    //RegExp
+    final String _passwordRegExp = r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$';
+    //Media Query (for screen rotation)
     final _width = MediaQuery.of(context).size.width;
     final _targetWidth = _width > 550 ? 500.0 : _width * 0.9;
     final _targetPadding = _width - _targetWidth;
-    return Container(
-      width: 300,
-      //margin: EdgeInsets.all(10.0),
-      child: Form(
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: _targetPadding / 1.5),
-          children: <Widget>[
-            //PRODUCT NAME
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                    labelText: 'ProductName' ,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    )
-                ),
-                onChanged: (String value ){
-                  setState(() {
-                    _titleValue = value;
-                  });
-                },
-              ),
-            ),
 
-            //DESCRIPTION
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                    labelText: 'Description' ,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    )
+    return GestureDetector(
+      onTap: (){FocusScope.of(context).requestFocus(FocusNode());}, //to close keyboard when tap on empty space
+      child: Container(
+        width: 300,
+        child: Form(
+          key: _productFormKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: _targetPadding / 1.5),
+            children: <Widget>[
+              //TITLE
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: TextFormField(
+                  decoration: _formInputDecoration('Title'),
+                  validator: (String value){
+                    if (value.isEmpty || value.length <= 5) {
+                      return '*Title is required, and it should be at least 5 characters long.';
+                    }
+                  },
+                  onSaved: (String value) { //Called NOT on every key stroke, but whenever we call the save() method.
+                    _formData['title'] = value;
+                  },
                 ),
-                maxLines: 4,
-                onChanged: (String value ){
-                  setState(() {
-                    _descriptionValue = value;
-                  });
-                },
               ),
-            ),
 
-            //PRICE
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Price' ,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  )
+              //DESCRIPTION
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: TextFormField(
+                  decoration: _formInputDecoration('Description'),
+                  maxLines: 4,
+                  validator: (String value){
+                    if (value.isEmpty || value.length <= 10) {
+                      return '*Description is required, and it should be at least 10 characters long.';
+                    }
+                  },
+                  onSaved: (String value) { //Called NOT on every key stroke, but whenever we call the save() method.
+                      _formData['description'] = value;
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                onChanged: (String value){
-                  setState(() {
-                    /*
-                    This parts needs to be improved.
-                    Write a function that checks if the input is in double format.
-                    we need try-catching
-                    */
-                    _priceValue = double.parse(value);
-                  });
-                },
               ),
-            ),
 
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 80),
-              child: RaisedButton(
-                color: Theme.of(context).accentColor,
-                onPressed: _addProduct,
-                child: Text('Add Product!', style: TextStyle(color: Colors.white)),
+              //PRICE
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: TextFormField(
+                  decoration: _formInputDecoration('Price'),
+                  keyboardType: TextInputType.number,
+                  validator: (String value){
+                    if (value.isEmpty || !RegExp(_passwordRegExp).hasMatch(value)) {
+                      return 'Price should be a valid number.';
+                    }
+                  },
+                  onSaved: (String value) { //Called NOT on every key stroke, but whenever we call the save() method.
+                      _formData['price'] = double.parse(value);
+                  },
+                ),
               ),
-            ),
-          ],
+
+              //BUTTON
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 80),
+                child: RaisedButton(
+                  color: Theme.of(context).accentColor,
+                  onPressed: _submitForm,
+                  child: Text('Add Product!', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
