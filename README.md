@@ -1,12 +1,12 @@
 ## EasyList (My First Flutter App)
-##### Completion: %37
+##### Completion: %40
 
-EasyList is a product listing app that users can list any kind of product and give it a price. There is (currently) no back-end, and it is primarily focused on understanding the workflow of the Flutter framework. 
+EasyList is a product listing app (like LetGo), that users can list any kind of products and give them each a price. There is (currently) no back-end, and it is primarily focused on understanding the workflow of the Flutter framework. 
 
 This is a self-study project. I am following Maximilian Schwarzmüller's [Flutter Course](https://www.udemy.com/learn-flutter-dart-to-build-ios-android-apps/) on Udemy.
 
 ---
-**Flutter not seeing your device on Linux?:** Flutter may require sudo access to connect to your phone, or even work properly. I type **sudo flutter doctor** on the terminal and restart the Android Studio in those cases. Not the best solution, but usually solves my problem.  
+**Flutter not seeing your device on Linux?:** If you install Flutter SDK from a package manager you will probably get that error. Basically need sudo privileges since Flutter SDK is now owned *not* by the user. There is a simple work around, type **sudo flutter doctor** on the terminal (and restart the Android Studio if you are using it). Not the best solution, but should solve the problem.  
 
 **Warning:** I have taken unprecedented amount of notes between comment blocks. No joke, the code is virtually not readible with having them around. That's how I usually study, sorry. 
 
