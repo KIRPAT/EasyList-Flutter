@@ -105,6 +105,12 @@ class _MyAppState extends State<MyApp>{
     });
   }
 
+  void _editProduct({int index, Map<String, dynamic> product}){
+    setState(() {
+      _products[index] = product;
+    });
+  }
+
   //WIDGETS
   Widget app (){
     return MaterialApp( // Wraps the whole widget and give capabilities of material design app, like theme, navigation.
@@ -119,7 +125,12 @@ class _MyAppState extends State<MyApp>{
       home: AuthPage(),
       routes:{
         '/home': (BuildContext context) => ProductsPage(_products),
-        '/adminPage' : (BuildContext context) => ProductAdminPage(_addProduct, _deleteProduct),
+        '/adminPage' : (BuildContext context) => ProductAdminPage(
+          addProduct: _addProduct,
+          deleteProduct: _deleteProduct,
+          editProduct: _editProduct,
+          products: _products,
+        ),
       },
       /*
       --Note_1: What if we need to pass some data to a named route?

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/ui/side_drawer.dart';
-import '../pages/product_create_page.dart';
+import '../pages/product_edit_page.dart';
 import '../pages/product_list_page.dart';
 
 
@@ -9,7 +9,9 @@ class ProductAdminPage extends StatelessWidget {
   //CONSTRUCTOR
   final Function addProduct;
   final Function deleteProduct;
-  ProductAdminPage(this.addProduct, this.deleteProduct);
+  final Function editProduct;
+  final List<Map<String, dynamic>> products;
+  ProductAdminPage({this.addProduct, this.deleteProduct, this.products, this.editProduct});
 
   //WIDGETS
   Widget _productAdminPageRender(BuildContext context){
@@ -30,8 +32,8 @@ class ProductAdminPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: <Widget>[
-              ProductCreatePage(addProduct),
-              ProductListPage(),
+              ProductEditPage(addProduct: addProduct, isAddButton: true,), //For adding Product
+              ProductListPage(products, editProduct),
             ]
           ),
         )
