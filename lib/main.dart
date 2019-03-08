@@ -1,5 +1,7 @@
+//FLUTTER DEV IMPORTS
 import 'package:flutter/material.dart';
 
+//PAGE IMPORTS
 import './pages/auth_page.dart';
 import './pages/product_admin_page.dart';
 import './pages/products_page.dart';
@@ -82,6 +84,7 @@ class _MyAppState extends State<MyApp>{
    */
   List<Map<String, dynamic>> _products =[];
 
+
   //METHODS
   /*
   What if I wanted the same "Add Product" button somewhere else too?
@@ -122,7 +125,7 @@ class _MyAppState extends State<MyApp>{
         primaryIconTheme: IconThemeData(color: Colors.white),
       ),
       title: 'EasyList',
-      home: AuthPage(),
+      home: ProductsPage(_products), //WARNING - Don't forget to replace it with Auth Page.
       routes:{
         '/home': (BuildContext context) => ProductsPage(_products),
         '/adminPage' : (BuildContext context) => ProductAdminPage(
@@ -131,6 +134,7 @@ class _MyAppState extends State<MyApp>{
           editProduct: _editProduct,
           products: _products,
         ),
+        '/authPage': (BuildContext context) => AuthPage(),
       },
       /*
       --Note_1: What if we need to pass some data to a named route?

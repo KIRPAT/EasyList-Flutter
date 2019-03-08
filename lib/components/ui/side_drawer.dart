@@ -31,7 +31,15 @@ Widget sideDrawer(BuildContext context, {Color color = Colors.white}){
           title: Text('AuthPage'),
           subtitle: Text('No validation yet, DEV only.'),
           onTap: (){
-            Navigator.pushReplacementNamed(context, '/');
+            Navigator.pushReplacementNamed(context, '/authPage');
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.find_in_page),
+          title: Text('Google Web View'),
+          subtitle: Text('No validation yet, DEV only.'),
+          onTap: (){
+            Navigator.pushReplacementNamed(context, '/google');
           },
         ),
       ],

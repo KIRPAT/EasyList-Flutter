@@ -9,7 +9,7 @@ class ProductsPage extends StatelessWidget {
   ProductsPage(this.products);
 
   Widget scaffold(context){
-    return Scaffold( // Home is the first widget that get's loaded, Scaffhold is AppBar, the white background etc. So? This Scaffhold is the home page.
+    return Scaffold( // Home is the first widget that get's loaded, Scaffold is AppBar, the white background etc. So? This Scaffhold is the home page.
       drawer: sideDrawer(context),
       appBar: AppBar(
         //leading: IconButton(icon: Icon(Icons.dehaze, color: Colors.white)),

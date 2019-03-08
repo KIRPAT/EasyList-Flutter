@@ -4,10 +4,11 @@ class ProductEditPage extends StatefulWidget {
   //CONSTRUCTOR
   final Function addProduct;
   final Function updateProduct;
+  final Function deleteProduct;
   final int productIndex;
   final bool isAddButton;
   final Map<String, dynamic> product;
-  ProductEditPage({this.addProduct, this.updateProduct, this.product, this.isAddButton=false, this.productIndex});
+  ProductEditPage({this.addProduct, this.deleteProduct, this.updateProduct, this.product, this.isAddButton=false, this.productIndex});
 
   //STATE
   @override
@@ -59,7 +60,8 @@ class _ProductEditPageState extends State<ProductEditPage>{
     if(widget.isAddButton == true)
       widget.addProduct(_formData);
     else
-      widget.updateProduct(index: widget.productIndex, product: _formData);
+      widget.updateProduct(index: widget.productIndex, product:
+      _formData);
     Navigator.pushReplacementNamed(context, '/home ');
   }
   //STYLE
