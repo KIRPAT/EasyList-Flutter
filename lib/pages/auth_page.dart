@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+//Components
 import '../components/buttons/accent_button.dart';
+//Helpers
+import '../helpers/RegExpLib.dart';
 
 class AuthPage extends StatefulWidget {
 @override
@@ -67,8 +70,6 @@ class _AuthPageState extends State<AuthPage>{
   Then wrap that with Center widget. Problem is focus.
   */
   Widget authPageRender(BuildContext context){
-    final String _emailRegExp = r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
-    final String _passwordRegExp = r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$';
     final _width = MediaQuery.of(context).size.width;
     final _targetWidth = _width > 500.0 ? _width * 0.6 : _width * 0.9;
 
@@ -94,7 +95,7 @@ class _AuthPageState extends State<AuthPage>{
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
                           validator: (String value){
-                            if (value.isEmpty || !RegExp(_emailRegExp).hasMatch(value)) {
+                            if (value.isEmpty || !RegExp(regLib['email']).hasMatch(value)) {
                               return 'Please enter a valid E-mail.';
                               //Note: Database query for user login is required.
                             }

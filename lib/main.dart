@@ -1,11 +1,13 @@
-//FLUTTER DEV IMPORTS
+//DART/FLUTTER LIBRARY
 import 'package:flutter/material.dart';
-
 //PAGE IMPORTS
 import './pages/auth_page.dart';
 import './pages/product_admin_page.dart';
 import './pages/products_page.dart';
 import './pages/product_details_page.dart';
+//Scoped-Model Imports
+import 'package:scoped_model/scoped_model.dart';
+import './scoped-models/products_scoped_model.dart';
 
 main() => runApp(MyApp());
 /*
@@ -82,125 +84,87 @@ class _MyAppState extends State<MyApp>{
   Wanna access any of them? _products[0]['title'];
   Returns the value, not the 'title'. For example, it can return "Chocolate".
    */
-  List<Map<String, dynamic>> _products =[];
-
-
   //METHODS
-  /*
-  What if I wanted the same "Add Product" button somewhere else too?
-  I do not wanna hard code component styles. I wanna call them,
-  and pass the necessary functions as an argument if needed.
-
-  In this case, I'm passing the name of the button,
-  the function it should be executing when pressed,
-  also the default product name when none given.
-
-  Best functions have the least amount of parameters. :3
-  */
-  void _addProduct(Map<String, dynamic> product){
-    setState((){ // Since the state got changed through setState() function, this Widget will be rendered again.
-      _products.add(product);
-    });
-  }
-  void _deleteProduct(int index){
-    setState(() {
-      _products.removeAt(index);
-    });
-  }
-
-  void _editProduct({int index, Map<String, dynamic> product}){
-    setState(() {
-      _products[index] = product;
-    });
-  }
 
   //WIDGETS
   Widget app (){
-    return MaterialApp( // Wraps the whole widget and give capabilities of material design app, like theme, navigation.
-      theme:ThemeData(
-        brightness: Brightness.light,
-        canvasColor: Colors.white,
-        primarySwatch: Colors.orange,
-        accentColor: Colors.orangeAccent,
-        primaryIconTheme: IconThemeData(color: Colors.white),
-      ),
-      title: 'EasyList',
-      home: ProductsPage(_products), //WARNING - Don't forget to replace it with Auth Page.
-      routes:{
-        '/home': (BuildContext context) => ProductsPage(_products),
-        '/adminPage' : (BuildContext context) => ProductAdminPage(
-          addProduct: _addProduct,
-          deleteProduct: _deleteProduct,
-          editProduct: _editProduct,
-          products: _products,
+    return ScopedModel<ProductsModel>(
+      model: ProductsModel(),
+      child: MaterialApp( // Wraps the whole widget and give capabilities of material design app, like theme, navigation.
+        theme:ThemeData(
+          brightness: Brightness.light,
+          canvasColor: Colors.white,
+          primarySwatch: Colors.orange,
+          accentColor: Colors.orangeAccent,
+          primaryIconTheme: IconThemeData(color: Colors.white),
         ),
-        '/authPage': (BuildContext context) => AuthPage(),
-      },
-      /*
-      --Note_1: What if we need to pass some data to a named route?
-      Let's say you wanna go to a product details page using a named route.
-      Those pages are not static and they are generated according to the data they are given as an argument.
-      (For this project; productName and productURL are required to be passed as an argument to details page each time we call it.
+        title: 'EasyList',
+        home: ProductsPage(), //WARNING - Don't forget to replace it with Auth Page.
+        routes:{
+          '/home': (BuildContext context) => ProductsPage(),
+          '/adminPage' : (BuildContext context) => ProductAdminPage(),
+          '/authPage': (BuildContext context) => AuthPage(),
+        },
+        /*
+        --Note_1: What if we need to pass some data to a named route?
+        Let's say you wanna go to a product details page using a named route.
+        Those pages are not static and they are generated according to the data they are given as an argument.
+        (For this project; productName and productURL are required to be passed as an argument to details page each time we call it.
 
-      Basically, just declaring them in the "routes:" won't work!
+        Basically, just declaring them in the "routes:" won't work!
 
-      Fortunately flutter has a solution for us, "onGenerateRoute:"
-      This widget takes a function, and that function returns a route.
+        Fortunately flutter has a solution for us, "onGenerateRoute:"
+        This widget takes a function, and that function returns a route.
 
-      --Note_2: Routes act weird, what's going on?
-      Short answer: These are NOT web page routes.
-      Throw away your assumptions, let me explain.
+        --Note_2: Routes act weird, what's going on?
+        Short answer: These are NOT web page routes.
+        Throw away your assumptions, let me explain.
 
-      "/" is the home route by default,
-      but you don't need "/" in anywhere of other routes.
-      Let's say you named a route "adminPage", that's it!
-      You don't go to "/adminPage", you go to "adminPage"
-      If you want "/" between pages, you have to manually add them.
+        "/" is the home route by default,
+        but you don't need "/" in anywhere of other routes.
+        Let's say you named a route "adminPage", that's it!
+        You don't go to "/adminPage", you go to "adminPage"
+        If you want "/" between pages, you have to manually add them.
 
-      --Note_3: Route Name Controls
-      You see that "settings"?
-      That thing holds a "name" property that stores our route name.
+        --Note_3: Route Name Controls
+        You see that "settings"?
+        That thing holds a "name" property that stores our route name.
 
-      We need analyze that route name an decide on how to load a dynamic page.
-      I mean: /productDetailsPage/3
-      How do we pass that 3 as an index to the productDetilsPage(...) route?
+        We need analyze that route name an decide on how to load a dynamic page.
+        I mean: /productDetailsPage/3
+        How do we pass that 3 as an index to the productDetilsPage(...) route?
 
-      See the following line?
-      final List<String> pathElements = settings.name.split('/');
-
-      So, normally the route name is generate like "/productDetailsPage/3"
-      We are going to split this string each time we see a "/",
-      and save it into te pathElements list.
-
-      It will look like this: ['','productDetailsPage','2'];
-      Yes there is going to be empty string at the beginning,
-      because we are splitting into two pieces each time.
-       */
-      onGenerateRoute: (RouteSettings settings){
+        See the following line?
         final List<String> pathElements = settings.name.split('/');
-        if (pathElements[0] != ''){
-          return null;
-        }
 
-        if (pathElements[1]=='productDetailsPage') {
-          final int index = int.parse(pathElements[2]);
-          return MaterialPageRoute<bool>(builder: (BuildContext context) =>
-            ProductDetailsPage(
-                _products[index]['title'],
-                _products[index]['image'],
-                _products[index]['description'],
-                _products[index]['price'],
-                _products[index]['location'],
-            )
+        So, normally the route name is generate like "/productDetailsPage/3"
+        We are going to split this string each time we see a "/",
+        and save it into te pathElements list.
+
+        It will look like this: ['','productDetailsPage','2'];
+        Yes there is going to be empty string at the beginning,
+        because we are splitting into two pieces each time.
+         */
+        onGenerateRoute: (RouteSettings settings){
+          final List<String> pathElements = settings.name.split('/');
+          if (pathElements[0] != ''){
+            return null;
+          }
+
+          if (pathElements[1]=='productDetailsPage') {
+            final int index = int.parse(pathElements[2]);
+            return MaterialPageRoute<bool>(builder: (BuildContext context) =>
+              ProductDetailsPage(null, null, null, null, null)
+            );
+          }
+          return null;
+        },
+        onUnknownRoute: (RouteSettings settings){
+          return MaterialPageRoute(
+            builder: (BuildContext context) => ProductsPage()
           );
-        }
-        return null;
-      },
-      onUnknownRoute: (RouteSettings settings){
-        return MaterialPageRoute(
-          builder: (BuildContext context) => ProductsPage(_products)
-        );
-      },
+        },
+      ),
     );
   }
 

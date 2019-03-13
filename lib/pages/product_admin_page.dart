@@ -1,17 +1,15 @@
+//DART/FLUTTER IMPORTS
 import 'package:flutter/material.dart';
-
+//COMPONENT IMPORTS
 import '../components/ui/side_drawer.dart';
+//PAGE IMPORTS
 import '../pages/product_edit_page.dart';
 import '../pages/product_list_page.dart';
-
+//MODEL IMPORTS
+import '../models/product_model.dart';
 
 class ProductAdminPage extends StatelessWidget {
-  //CONSTRUCTOR
-  final Function addProduct;
-  final Function deleteProduct;
-  final Function editProduct;
-  final List<Map<String, dynamic>> products;
-  ProductAdminPage({this.addProduct, this.deleteProduct, this.products, this.editProduct});
+  //CONSTRUCTOR (no longer here, we use scoped models now)
 
   //WIDGETS
   Widget _productAdminPageRender(BuildContext context){
@@ -32,9 +30,10 @@ class ProductAdminPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: <Widget>[
-              ProductEditPage(addProduct: addProduct, isAddButton: true,), //For adding Product
-              ProductListPage(products: products, editProduct: editProduct, deleteProduct: deleteProduct),
+              ProductEditPage(isAddButton: true,), //For adding Product
+              ProductListPage(deleteProduct: null, editProduct: null, products: null,),
             ]
+
           ),
         )
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 //Widgets we wrote
 import './products.dart';
+import './models/product_model.dart';
 
 /* Note_1
 What's going on here?
@@ -16,16 +17,12 @@ MyApp is no longer the parent of Products, ProductManager is.
 The MyApp is now the root of the entire App and the parent of ProductManager instead.
 */
 class ProductManager extends StatelessWidget{
-  //CONSTRUCTOR
-  final List<Map<String,dynamic>> products;
-  ProductManager(this.products);
-
-  //WIDGETS
+    //WIDGETS
   Widget productManagerRender(){
     return Column( // A Button at the top, and the rest is a Column of Cards.
       children: [
         Expanded( // products.dart
-            child: Products(products)
+            child: Products()
         ), // The Product widget that we defined in the. (Look how shorter it is now. <3)
       ],
     );

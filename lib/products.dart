@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import './components/cards/product_card.dart';
+import 'package:scoped_model/scoped_model.dart';
 
+import './components/cards/product_card.dart';
+import './scoped-models/products_scoped_model.dart';
+import './models/product_model.dart';
 class Products extends StatelessWidget {
   //CONSTRUCTOR
-  final List<Map<String, dynamic>> products; // First we create the place that holds the product info, the products list. This is *the property* I mentioned.
-  Products(this.products); // And this is the constructor that takes info from the parent and passes it into the products list.
 
   //WIDGETS
   /*
@@ -102,10 +103,9 @@ class Products extends StatelessWidget {
     );
   }
    */
-  Widget _buildProductList(){
+  Widget _buildProductList(List<Product>products){
     if (products.length>0){
       return ListView.builder(
-        //itemBuilder: _buildProductItem, //The old item builder. We used to pass only the method, but we did NOT EXECUTE with "()"
         itemBuilder: (BuildContext context, int index) => ProductCard(products[index], index),
         itemCount: products.length,
       );
@@ -117,6 +117,10 @@ class Products extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    return _buildProductList();
+    return ScopedModelDescendant<ProductsModel>(
+      builder:(BuildContext context, Widget child, ProductsModel model){
+        return _buildProductList(model.products);
+      },
+    );
   }
 }
