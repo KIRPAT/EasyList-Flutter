@@ -5,7 +5,7 @@ import './components/cards/product_card.dart';
 import './scoped-models/products_scoped_model.dart';
 import './models/product_model.dart';
 class Products extends StatelessWidget {
-  //CONSTRUCTOR
+  //CONSTRUCTOR (We don't need one, not anymore. Take a look at the build method, you will see the ScopedModelDescendant )
 
   //WIDGETS
   /*
@@ -103,23 +103,24 @@ class Products extends StatelessWidget {
     );
   }
    */
-  Widget _buildProductList(List<Product>products){
-    if (products.length>0){
-      return ListView.builder(
-        itemBuilder: (BuildContext context, int index) => ProductCard(products[index], index),
-        itemCount: products.length,
-      );
-    } else {
-      return Center(
-          child: Text("No Products to see here.")
-      );
-    }
+  ListView _products({@required List<Product> products}){
+    return ListView.builder(
+      itemBuilder: (BuildContext context, int index) =>
+          ProductCard(products[index], index),
+      itemCount: products.length,
+    );
   }
+
+  //Rendered Widget
+  Widget _render(List<Product>products){
+    return products.length > 0 ? _products(products: products) : Center(child: Text("No Products to see here."));
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<ProductsModel>(
       builder:(BuildContext context, Widget child, ProductsModel model){
-        return _buildProductList(model.products);
+        return _render(model.products);
       },
     );
   }

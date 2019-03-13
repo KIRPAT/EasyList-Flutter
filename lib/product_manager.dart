@@ -19,11 +19,9 @@ The MyApp is now the root of the entire App and the parent of ProductManager ins
 class ProductManager extends StatelessWidget{
     //WIDGETS
   Widget productManagerRender(){
-    return Column( // A Button at the top, and the rest is a Column of Cards.
+    return Column( // Used to be a button at the top, and the rest was a Column of Cards. Now there are only cards.
       children: [
-        Expanded( // products.dart
-            child: Products()
-        ), // The Product widget that we defined in the. (Look how shorter it is now. <3)
+        Expanded(child: Products()), // The Product widget that we defined in the. (Look how shorter it is now. <3)
       ],
     );
   }

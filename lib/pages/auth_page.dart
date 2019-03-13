@@ -29,7 +29,7 @@ class _AuthPageState extends State<AuthPage>{
     Navigator.pushReplacementNamed(context, '/home');
   }
 
-  //STYLE COMPONENTS
+  //STYLE
   InputDecoration _loginFormInputDecoration(String labelText, String hintText, IconData fieldIcon) {
     return InputDecoration(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -69,13 +69,74 @@ class _AuthPageState extends State<AuthPage>{
   Wrap the ListView with a Sized Box. Basically make the Sized box the new body.
   Then wrap that with Center widget. Problem is focus.
   */
+  Widget _emailField(){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        validator: (String value){
+          if (value.isEmpty || !RegExp(regExpLib['email']).hasMatch(value)) {
+            return 'Please enter a valid E-mail.';
+            //Note: Database query for user login is required.
+          }
+        },
+        decoration: _loginFormInputDecoration('E-mail', 'user@email', Icons.mail),
+        onSaved: (String value){_loginFormData['email']= value;},
+        keyboardType: TextInputType.emailAddress,
+      ),
+    );
+  }
+  Widget _passwordFild(){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        validator: (String value){
+          if (value.isEmpty || value.length < 6) {
+            return 'Please enter a valid password.';
+            //Note: Database query for user login is required.
+          }
+        },
+        decoration: _loginFormInputDecoration('password', 'A-z, 0-9, -_,', Icons.vpn_key),
+        onSaved: (String value){_loginFormData['password'] = value;},
+        obscureText: true,
+      ),
+    );
+  }
+  Widget _termsOfServiceSwitch(){
+    return Row(
+      children: <Widget>[
+        Expanded(
+            flex: 1,
+            child: SizedBox()
+        ),
+        Expanded(
+          flex: 3,
+          child: SwitchListTile(
+              title: Text('Terms of Service'),
+              value: _loginFormData['acceptTerms'],
+              onChanged: (bool value){
+                setState(() {
+                  _loginFormData['acceptTerms'] = value;
+                });
+              }
+          ),
+        ),
+      ],
+    );
+  }
+  Widget _loginButton(){
+    return Padding(
+      padding: EdgeInsets.only(left: 100.0, right: 100.0),
+      child: AccentButton(buttonName: 'Login', buttonPress: _login, data: context),
+    );
+  }
+
   Widget authPageRender(BuildContext context){
     final _width = MediaQuery.of(context).size.width;
     final _targetWidth = _width > 500.0 ? _width * 0.6 : _width * 0.9;
 
     return Scaffold(
-      body: GestureDetector(
-        onTap: (){FocusScope.of(context).requestFocus(FocusNode());}, //close keyboard on empty space tap
+      body: GestureDetector( //close keyboard on empty space tap
+        onTap: (){FocusScope.of(context).requestFocus(FocusNode());},
         child: Container(
           //ContainerStyle
           decoration: _loginPageBoxDecoration('assets/delo.jpg'),
@@ -90,61 +151,10 @@ class _AuthPageState extends State<AuthPage>{
                   key: _loginFormKey,
                   child: Column(
                     children: <Widget>[
-                      //E-MAIL
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          validator: (String value){
-                            if (value.isEmpty || !RegExp(regLib['email']).hasMatch(value)) {
-                              return 'Please enter a valid E-mail.';
-                              //Note: Database query for user login is required.
-                            }
-                          },
-                          decoration: _loginFormInputDecoration('E-mail', 'user@email', Icons.mail),
-                          onSaved: (String value){_loginFormData['email']= value;},
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                      ),
-                      //PASSWORD
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextFormField(
-                          validator: (String value){
-                            if (value.isEmpty || value.length < 6) {
-                              return 'Please enter a valid password.';
-                              //Note: Database query for user login is required.
-                            }
-                          },
-                          decoration: _loginFormInputDecoration('password', 'A-z, 0-9, -_,', Icons.vpn_key),
-                          onSaved: (String value){_loginFormData['password'] = value;},
-                          obscureText: true,
-                        ),
-                      ),
-                      //Login Button
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 1,
-                            child: SizedBox()
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: SwitchListTile(
-                              title: Text('Terms of Service'),
-                              value: _loginFormData['acceptTerms'],
-                              onChanged: (bool value){
-                                setState(() {
-                                  _loginFormData['acceptTerms'] = value;
-                                });
-                              }
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 100.0, right: 100.0),
-                        child: AccentButton(buttonName: 'Login', buttonPress: _login, data: context),
-                      ),
+                      _emailField(),
+                      _passwordFild(),
+                      _termsOfServiceSwitch(),
+                      _loginButton(),
                     ],
                   ),
                 ),

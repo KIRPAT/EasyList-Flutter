@@ -6,7 +6,7 @@ import '../components/styled_text/location_tag.dart';
 import 'dart:async';
 
 class ProductDetailsPage extends StatelessWidget{
-  //CONSTRUCTOR
+  //CONSTRUCTOR (we will get rid of it soon)
   final String title;
   final String imageURL;
   final String description;
@@ -15,17 +15,11 @@ class ProductDetailsPage extends StatelessWidget{
   ProductDetailsPage(this.title, this.imageURL, this.description, this.price, this.location);
 
   //METHODS
+  //showDialog() is dismissed through Navigation.pop() too
+  void _popPage(context) => Navigator.pop(context, true);
+  void _onWillPop(context) => Navigator.pop(context, false);
+
   /*
-  shoDialog() is dismissed through Navigation.pop() too
-   */
-  void _popPage(context){
-    Navigator.pop(context, true);
-  }
-
-  void _onWillPop(context){
-    Navigator.pop(context, false);
-  }
-
   void _showDeleteDialog(context){
     showDialog(
       context: context,
@@ -52,8 +46,67 @@ class ProductDetailsPage extends StatelessWidget{
       }
     );
   }
+  */
+  //WIDGETS
+  Widget _image(){
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: Image.asset(imageURL),
+      ),
+    );
+  }
+  Widget _titleAndPrice(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+          flex: 2,
+          child: Center(
+            child: DefaultProductTitle(title), //Custom Widget
+          ),
+          //constraints:BoxConstraints(maxWidth: 200.0),
+        ),
+        Expanded(
+          flex: 1,
+          child: Center(
+            child: PriceTag(price),
+          ),
+        ),
+      ],
+    );
+  }
+  Widget _divider(){
+    return Padding(
+      padding: EdgeInsets.only(top: 13.0, bottom: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Expanded(child: SizedBox(), flex:1),
+          Expanded(
+            flex: 3,
+            child: Container(
+              height: 1.0,
+              color: Colors.grey,
+            ),
+          ),
+          Expanded(child: SizedBox(), flex:1),
+        ],
+      ),
+    );
+  }
 
-  //WIDGETS (from component level widget, to the final composed widget that we need to render)
+  Widget _details(){
+    return Container(
+      child: Column(children: <Widget>[
+        Text('Details:', style: TextStyle(fontStyle: FontStyle.italic, fontFamily: 'Oswald', fontSize: 15.0),),
+        SizedBox(height: 6.0,),
+        Text(description),
+      ],)
+    );
+  }
+
+  //Rendered Widget
   Widget _scaffold(BuildContext context){
     return Scaffold(
       appBar: AppBar(
@@ -62,73 +115,18 @@ class ProductDetailsPage extends StatelessWidget{
       body:SingleChildScrollView( //Scrollable details page
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.0),
-
           //The main Column
           child: Column(
             children: <Widget>[
-
-              //Image
               /*
               What if the product has more than one image? Food for a thought.
                */
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Image.asset(imageURL),
-                ),
-              ),
-
-              //Title and Price
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: Center(
-                      child: DefaultProductTitle(title), //Custom Widget
-                    ),
-                    //constraints:BoxConstraints(maxWidth: 200.0),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Center(
-                      child: PriceTag(price),
-                    ),
-                  ),
-                ],
-              ),
-
-              //Location
+              _image(),
+              _titleAndPrice(),
               LocationTag(location),
-
-              //Divider
-              Padding(
-                padding: EdgeInsets.only(top: 13.0, bottom: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(child: SizedBox(), flex:1),
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                        height: 1.0,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Expanded(child: SizedBox(), flex:1),
-                  ],
-                ),
-              ),
-
+              _divider(),
               //Details
-              Container(
-                child: Column(children: <Widget>[
-                  Text('Details:', style: TextStyle(fontStyle: FontStyle.italic, fontFamily: 'Oswald', fontSize: 15.0),),
-                  SizedBox(height: 6.0,),
-                  Text(description),
-                ],)
-              ),
-
+              _details(),
             ],
           ),
         ),

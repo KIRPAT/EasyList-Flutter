@@ -2,6 +2,10 @@ import 'package:scoped_model/scoped_model.dart';
 import '../models/product_model.dart';
 
 /*
+NOTE_ 1:
+About the old private variables and functions,
+they are different now.
+
 I used to define methods using the underscore, "_", in front of them.
 But they were in the main method back then.
 Now they should be accessible since we are defining them in the class, and calling the class from outside.
@@ -18,15 +22,17 @@ to show outside the products list.
 
 thanks to getter we can call the methods by simply typing.
 leProductsModel.products
+
+Note_2:
+List.from(<insert list here>)
+Does not return the address of the _products,
+Creates a copy of the products in the memory and returns it instead.
  */
 class ProductsModel extends Model {
   List<Product> _products =[];
 
   List<Product> get products {
     return List.from(_products);
-    /*Does not return the address of the _products,
-      Creates a copy of the products in the memory and returns it instead.
-    */
   }
 
   void addProduct(Product product){

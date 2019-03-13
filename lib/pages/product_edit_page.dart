@@ -62,11 +62,12 @@ class _ProductEditPageState extends State<ProductEditPage>{
   then BUILD METHOD
   */
   void _submitForm(Function addProduct, Function updateProduct){
-    //if the validation returns false do not save
+    //Is the form valid? If not, does not execute the rest of the form.
     if (!_productFormKey.currentState.validate()){return;}
     _productFormKey.currentState.save();
 
-    if(widget.isAddButton == true)
+    //Which function to use? add or edit
+    widget.isAddButton ?
       addProduct(
         Product( //Map to Product
           title: _formData['title'],
@@ -75,17 +76,19 @@ class _ProductEditPageState extends State<ProductEditPage>{
           image: _formData['image'],
           location: _formData['location']
         )
-      );
-    else updateProduct(
+      )
+    : updateProduct(
       index: widget.productIndex,
-      product:  Product( //Map to Product
-          title: _formData['title'],
-          description: _formData['description'],
-          price: _formData['price'],
-          image: _formData['image'],
-          location: _formData['location']
+      product: Product( //Map to Product
+        title: _formData['title'],
+        description: _formData['description'],
+        price: _formData['price'],
+        image: _formData['image'],
+        location: _formData['location']
       )
     );
+
+    //When done, get back to home.
     Navigator.pushReplacementNamed(context, '/home ');
   }
 
@@ -104,16 +107,13 @@ class _ProductEditPageState extends State<ProductEditPage>{
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
-        initialValue: doesProductExist == false ? '' : widget.product.title,
+        initialValue: doesProductExist ? widget.product.title : '',
         decoration: _formInputDecoration('Title'),
         validator: (String value){
-          if (value.isEmpty || value.length <= 5) {
+          if (value.isEmpty || value.length <= 5)
             return '*Title is required, and it should be at least 5 characters long.';
-          }
         },
-        onSaved: (String value) { //Called NOT on every key stroke, but whenever we call the save() method.
-          _formData['title'] = value;
-        },
+        onSaved: (String value) {_formData['title'] = value;},
       ),
     );
   }
@@ -122,17 +122,14 @@ class _ProductEditPageState extends State<ProductEditPage>{
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
-        initialValue: doesProductExist == false ? '' : widget.product.description,
+        initialValue: doesProductExist ? widget.product.description : '',
         decoration: _formInputDecoration('Description'),
         maxLines: 4,
         validator: (String value){
-          if (value.isEmpty || value.length <= 10) {
+          if (value.isEmpty || value.length <= 10)
             return '*Description is required, and it should be at least 10 characters long.';
-          }
         },
-        onSaved: (String value) { //Called NOT on every key stroke, but whenever we call the save() method.
-          _formData['description'] = value;
-        },
+        onSaved: (String value) {_formData['description'] = value;},
       ),
     );
   }
@@ -141,17 +138,15 @@ class _ProductEditPageState extends State<ProductEditPage>{
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
-        initialValue: doesProductExist == false ? '' : widget.product.price.toString(),
+        initialValue: doesProductExist ? widget.product.price.toString() : '',
         decoration: _formInputDecoration('Price'),
         keyboardType: TextInputType.number,
         validator: (String value){
-          if (value.isEmpty || !RegExp(priceRegExp).hasMatch(value)) {
+          if (value.isEmpty || !RegExp(priceRegExp).hasMatch(value))
             return 'Price should be a valid number.';
-          }
         },
-        onSaved: (String value) { //Called NOT on every key stroke, but whenever we call the save() method.
-          _formData['price'] = double.parse(value);
-        },
+        onSaved: (String value) {_formData['price'] = double.parse(value);},
+        //Called NOT on every key stroke, but whenever we call the save() method.
       ),
     );
   }
@@ -175,28 +170,23 @@ class _ProductEditPageState extends State<ProductEditPage>{
   }
 
   Widget _form(){
-    //RegExp
-    final String priceRegExp = regLib['price'];
     //Media Query (for screen rotation)
     final _width = MediaQuery.of(context).size.width;
     final _targetWidth = _width > 550 ? 500.0 : _width * 0.9;
     final _targetPadding = _width - _targetWidth;
-    String _buttonText;
-    bool doesProductExist;
 
-    if (widget.isAddButton){_buttonText = 'Add Product';}
-      else {_buttonText = 'Submit Changes';}
-    if (widget.product == null){doesProductExist = false;}
-      else doesProductExist = true;
+    //Add Product or Edit Product
+    String _buttonText = widget.isAddButton ? 'Add Product': 'Submit Changes';
+    bool doesProductExist = widget.product == null ? false :  true;
 
-      return Form(
+    return Form(
       key: _productFormKey,
       child: ListView(
         padding: EdgeInsets.symmetric(horizontal: _targetPadding / 1.5),
         children: <Widget>[
           _titleField(doesProductExist),
           _descriptionField(doesProductExist),
-          _priceField(doesProductExist, priceRegExp),
+          _priceField(doesProductExist, regExpLib['price']),
           _submitButton(_buttonText, doesProductExist),
         ],
       ),
@@ -217,7 +207,6 @@ class _ProductEditPageState extends State<ProductEditPage>{
     );
   }
   //BUILD
-  @override
   Widget build(BuildContext context) {
     return widget.product == null ? _render(context) : Scaffold(appBar: AppBar(title: Text('Edit Product'),), body: _render(context),);
   }

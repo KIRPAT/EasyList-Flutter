@@ -7,10 +7,9 @@ class ProductListPage extends StatelessWidget{
   final Function editProduct;
   final Function deleteProduct;
   ProductListPage({this.products, this.editProduct, this.deleteProduct});
-  //Methods
 
   //Widgets
-  IconButton _editButton ({BuildContext context, int index}){
+  IconButton _editButton ({@required BuildContext context, @required int index}){
     return IconButton(icon: Icon(Icons.edit),onPressed: (){
       Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context){
@@ -24,6 +23,17 @@ class ProductListPage extends StatelessWidget{
       ));
     },);
   }
+
+  ListTile _listTile({@required BuildContext context, @required int index}) {
+    return ListTile(
+      leading: CircleAvatar(
+      backgroundImage: AssetImage(products[index].image)),
+      title: Text(products[index].title),
+      subtitle: Text('\$${products[index].price.toString()}'
+      ),
+      trailing: _editButton(context: context, index: index),
+    );
+}
   //Style
 
   //Rendered Widgets
@@ -34,17 +44,10 @@ class ProductListPage extends StatelessWidget{
           direction: DismissDirection.startToEnd,
           onDismissed: (DismissDirection direction){deleteProduct(index);},
           background: Container(color: Colors.red[200]),
-          key: Key(products[index].title),
+          key: Key(products[index].title), //Title is not the best identifier. We need an id
           child: Column(
             children: <Widget>[
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage(products[index].image)),
-                  title: Text(products[index].title),
-                  subtitle: Text('\$${products[index].price.toString()}'
-                ),
-                trailing: _editButton(context: context, index: index),
-              ),
+              _listTile(context: context, index: index),
               Divider(),
             ],
           ),
@@ -53,6 +56,7 @@ class ProductListPage extends StatelessWidget{
       itemCount: products.length,
     );
   }
+
   //Build Method
   @override
   Widget build(BuildContext context) {
