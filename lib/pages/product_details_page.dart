@@ -1,18 +1,20 @@
+//Flutter Libs
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'dart:async';
+//Components
 import '../components/styled_text/price_tag.dart';
 import '../components/styled_text/default_product_title.dart';
 import '../components/styled_text/location_tag.dart';
-
-import 'dart:async';
+//Scoped-Model Models
+import '../scoped-models/products_scoped_model.dart';
+//Models
+import '../models/product_model.dart';
 
 class ProductDetailsPage extends StatelessWidget{
   //CONSTRUCTOR (we will get rid of it soon)
-  final String title;
-  final String imageURL;
-  final String description;
-  final double price;
-  final String location;
-  ProductDetailsPage(this.title, this.imageURL, this.description, this.price, this.location);
+  final int index;
+  ProductDetailsPage(this.index);
 
   //METHODS
   //showDialog() is dismissed through Navigation.pop() too
@@ -48,7 +50,7 @@ class ProductDetailsPage extends StatelessWidget{
   }
   */
   //WIDGETS
-  Widget _image(){
+  Widget _image(String imageURL){
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -56,7 +58,7 @@ class ProductDetailsPage extends StatelessWidget{
       ),
     );
   }
-  Widget _titleAndPrice(){
+  Widget _titleAndPrice(String title, double price){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -96,7 +98,7 @@ class ProductDetailsPage extends StatelessWidget{
     );
   }
 
-  Widget _details(){
+  Widget _details(String description){
     return Container(
       child: Column(children: <Widget>[
         Text('Details:', style: TextStyle(fontStyle: FontStyle.italic, fontFamily: 'Oswald', fontSize: 15.0),),
@@ -108,30 +110,37 @@ class ProductDetailsPage extends StatelessWidget{
 
   //Rendered Widget
   Widget _scaffold(BuildContext context){
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Product Details', style: TextStyle(color: Colors.white)),
-      ),
-      body:SingleChildScrollView( //Scrollable details page
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0),
-          //The main Column
-          child: Column(
-            children: <Widget>[
-              /*
-              What if the product has more than one image? Food for a thought.
-               */
-              _image(),
-              _titleAndPrice(),
-              LocationTag(location),
-              _divider(),
-              //Details
-              _details(),
-            ],
+    return ScopedModelDescendant<ProductsModel>(builder:(BuildContext context, Widget child, ProductsModel model){
+      /* Note: Refactoring for Scoped Model
+      The data of the "Product" is no longer received through the constructor. Why? Scoped Model exists, and it is beautiful.
+      So, we need to access the data of scoped model, and pass them into following column widgets properly.
+      */
+      final Product _product = model.products[index];
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Product Details', style: TextStyle(color: Colors.white)),
+        ),
+        body:SingleChildScrollView( //Scrollable details page
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            //The main Column
+            child: Column(
+              children: <Widget>[
+                /*
+                What if the product has more than one image? Food for a thought.
+                 */
+                _image(_product.image),
+                _titleAndPrice(_product.title, _product.price),
+                LocationTag(_product.location),
+                _divider(),
+                //Details
+                _details(_product.description),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _listenedScaffold(BuildContext context){

@@ -6,7 +6,6 @@ import '../components/ui/side_drawer.dart';
 import '../pages/product_edit_page.dart';
 import '../pages/product_list_page.dart';
 //MODEL IMPORTS
-import '../models/product_model.dart';
 
 class ProductAdminPage extends StatelessWidget {
   //CONSTRUCTOR (no longer here, we use scoped models now)
@@ -30,8 +29,8 @@ class ProductAdminPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: <Widget>[
-              ProductEditPage(isAddButton: true,), //For adding Product
-              ProductListPage(deleteProduct: null, editProduct: null, products: null,),
+              ProductEditPage(), //
+              ProductListPage(),
             ]
 
           ),

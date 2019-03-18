@@ -10,13 +10,6 @@ import '../scoped-models/products_scoped_model.dart';
 
 class ProductEditPage extends StatefulWidget {
   //CONSTRUCTOR
-  final Function addProduct;
-  final Function updateProduct;
-  final Function deleteProduct;
-  final int productIndex;
-  final bool isAddButton;
-  final Product product;
-  ProductEditPage({this.addProduct, this.deleteProduct, this.updateProduct, this.product, this.isAddButton=false, this.productIndex});
 
   //STATE
   @override
@@ -34,6 +27,7 @@ class _ProductEditPageState extends State<ProductEditPage>{
     'image': 'assets/lmr.png',
     'location': 'İstanbul, Taksim',
   };
+
 
   final GlobalKey<FormState> _productFormKey = new GlobalKey<FormState>();
   //METHODS
@@ -61,33 +55,21 @@ class _ProductEditPageState extends State<ProductEditPage>{
 
   then BUILD METHOD
   */
-  void _submitForm(Function addProduct, Function updateProduct){
+  void _submitForm({@required Function formSubmit, int index}){
     //Is the form valid? If not, does not execute the rest of the form.
     if (!_productFormKey.currentState.validate()){return;}
     _productFormKey.currentState.save();
 
-    //Which function to use? add or edit
-    widget.isAddButton ?
-      addProduct(
-        Product( //Map to Product
-          title: _formData['title'],
-          description: _formData['description'],
-          price: _formData['price'],
-          image: _formData['image'],
-          location: _formData['location']
-        )
-      )
-    : updateProduct(
-      index: widget.productIndex,
-      product: Product( //Map to Product
+    formSubmit(
+      formData: Product( //Map to Product
         title: _formData['title'],
         description: _formData['description'],
         price: _formData['price'],
         image: _formData['image'],
         location: _formData['location']
-      )
+      ),
+      index: index,
     );
-
     //When done, get back to home.
     Navigator.pushReplacementNamed(context, '/home ');
   }
@@ -103,65 +85,72 @@ class _ProductEditPageState extends State<ProductEditPage>{
   }
 
   //WIDGETS
-  Widget _titleField (bool doesProductExist){
+  Widget _titleField (){
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        initialValue: doesProductExist ? widget.product.title : '',
-        decoration: _formInputDecoration('Title'),
-        validator: (String value){
-          if (value.isEmpty || value.length <= 5)
-            return '*Title is required, and it should be at least 5 characters long.';
-        },
-        onSaved: (String value) {_formData['title'] = value;},
-      ),
+      child: ScopedModelDescendant<ProductsModel>(builder: (context, child, model){
+        return TextFormField(
+          initialValue: model.selectedProductIndex == null ? '' : model.selectedProduct.title,
+          decoration: _formInputDecoration('Title'),
+          validator: (String value){
+            if (value.isEmpty || value.length <= 5)
+              return '*Title is required, and it should be at least 5 characters long.';
+          },
+          onSaved: (String value) {_formData['title'] = value;},
+        );
+      })
     );
   }
 
-  Widget _descriptionField(bool doesProductExist){
-    return Padding(
+  Widget _descriptionField(){
+
+    return  Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        initialValue: doesProductExist ? widget.product.description : '',
-        decoration: _formInputDecoration('Description'),
-        maxLines: 4,
-        validator: (String value){
-          if (value.isEmpty || value.length <= 10)
-            return '*Description is required, and it should be at least 10 characters long.';
-        },
-        onSaved: (String value) {_formData['description'] = value;},
-      ),
+      child: ScopedModelDescendant<ProductsModel>(builder: (BuildContext context, Widget child, ProductsModel model){
+        return TextFormField(
+          initialValue: model.isSelected ? model.selectedProduct.description : '',
+          decoration: _formInputDecoration('Description'),
+          maxLines: 4,
+          validator: (String value){
+            if (value.isEmpty || value.length <= 10)
+              return '*Description is required, and it should be at least 10 characters long.';
+          },
+          onSaved: (String value) {_formData['description'] = value;},
+        );
+      }),
     );
   }
 
-  Widget _priceField(bool doesProductExist, String priceRegExp){
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        initialValue: doesProductExist ? widget.product.price.toString() : '',
-        decoration: _formInputDecoration('Price'),
-        keyboardType: TextInputType.number,
-        validator: (String value){
-          if (value.isEmpty || !RegExp(priceRegExp).hasMatch(value))
-            return 'Price should be a valid number.';
-        },
-        onSaved: (String value) {_formData['price'] = double.parse(value);},
-        //Called NOT on every key stroke, but whenever we call the save() method.
-      ),
+  Widget _priceField({@required String priceRegExp}){
+    return ScopedModelDescendant<ProductsModel>(
+      builder:(BuildContext context, Widget child, ProductsModel model){
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: TextFormField(
+            initialValue: model.selectedProductIndex == null ? '' : model.selectedProduct.price.toString(),
+            decoration: _formInputDecoration('Price'),
+            keyboardType: TextInputType.number,
+            validator: (String value){
+              if (value.isEmpty || !RegExp(priceRegExp).hasMatch(value))
+                return 'Price should be a valid number.';
+            },
+            onSaved: (String value) {_formData['price'] = double.parse(value);},
+            //Called NOT on every key stroke, but whenever we call the save() method.
+          ),
+        );
+      }
     );
   }
 
-  Widget _submitButton(String _buttonText, bool doesProductExist){
+  Widget _submitButton(){
     return ScopedModelDescendant<ProductsModel>(
       builder: (BuildContext context, Widget child, ProductsModel model){
         return Container(
           margin: EdgeInsets.symmetric(horizontal: 80),
           child: RaisedButton(
             color: Theme.of(context).accentColor,
-            onPressed: () => _submitForm(model.addProduct, model.updateProduct),
-            child: Text(
-                _buttonText,
-                style: TextStyle(color: Colors.white)
+            onPressed: () => _submitForm(formSubmit: model.formSubmit, index: model.selectedProductIndex),
+            child: Text('Submit', style: TextStyle(color: Colors.white)
             ),
           ),
         );
@@ -169,45 +158,42 @@ class _ProductEditPageState extends State<ProductEditPage>{
     );
   }
 
-  Widget _form(){
+  Widget _form({int selectedIndex, Product selectedProduct}){
     //Media Query (for screen rotation)
     final _width = MediaQuery.of(context).size.width;
     final _targetWidth = _width > 550 ? 500.0 : _width * 0.9;
     final _targetPadding = _width - _targetWidth;
-
-    //Add Product or Edit Product
-    String _buttonText = widget.isAddButton ? 'Add Product': 'Submit Changes';
-    bool doesProductExist = widget.product == null ? false :  true;
 
     return Form(
       key: _productFormKey,
       child: ListView(
         padding: EdgeInsets.symmetric(horizontal: _targetPadding / 1.5),
         children: <Widget>[
-          _titleField(doesProductExist),
-          _descriptionField(doesProductExist),
-          _priceField(doesProductExist, regExpLib['price']),
-          _submitButton(_buttonText, doesProductExist),
+          _titleField(),
+          _descriptionField(),
+          _priceField(priceRegExp: regExpLib['price']),
+          _submitButton(),
         ],
       ),
     );
   }
-  /*
-  This widget became too verbose and redundant.
-  I need to create a text input widget and call it here.
-   */
+
   // RENDERED WIDGET
-  Widget _render(context){
+  Widget _render(context) {
     return GestureDetector(
       onTap: (){FocusScope.of(context).requestFocus(FocusNode());}, //to close keyboard when tap on empty space
       child: Container(
         width: 300,
-        child: _form(),
+        child: _form()
       ),
     );
   }
+
   //BUILD
   Widget build(BuildContext context) {
-    return widget.product == null ? _render(context) : Scaffold(appBar: AppBar(title: Text('Edit Product'),), body: _render(context),);
+    return ScopedModelDescendant<ProductsModel>(builder: (BuildContext context, Widget child, ProductsModel model){
+      Widget render = _render(context);
+      return model.selectedProductIndex == null ? render : Scaffold(appBar: AppBar(title: Text('Edit Product'),), body: render,);;
+    },);
   }
 }
